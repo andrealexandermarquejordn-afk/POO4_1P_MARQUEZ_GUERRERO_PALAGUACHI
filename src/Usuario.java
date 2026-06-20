@@ -87,6 +87,9 @@ public boolean iniciarSesion(String username, String password) {
         return rol;
     }
 
+    public void setRol(char rol) {
+        this.rol = rol;
+    }
 
     
         public String toString() {
