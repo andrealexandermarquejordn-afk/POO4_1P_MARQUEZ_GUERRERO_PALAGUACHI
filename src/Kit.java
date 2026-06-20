@@ -26,7 +26,8 @@ public class Kit {
         return nombre; 
     }
     public String getDescripcion() { 
-        return descripcion; }
+        return descripcion; 
+    }
     public ArrayList<String> getCodigosPartidosIncluidos() { 
         return codigosPartidosIncluidos; 
     }
