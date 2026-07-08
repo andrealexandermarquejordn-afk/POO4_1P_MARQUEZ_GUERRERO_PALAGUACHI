@@ -1,13 +1,13 @@
-public class Usuario {
+public abstract class Usuario {
     
-    private String codigoUnico;
-    private String cedula;
-    private String nombres;
-    private String apellidos;
-    private String username;
-    private String password;
-    private String correo;
-    private char rol;
+    protected String codigoUnico;
+    protected String cedula;
+    protected String nombres;
+    protected String apellidos;
+    protected String username;
+    protected String password;
+    protected String correo;
+    protected char rol;
 
 
 public Usuario() {
@@ -87,9 +87,9 @@ public boolean iniciarSesion(String username, String password) {
         return rol;
     }
 
-
-    
-        public String toString() {
+    public String toString() {
         return "Usuario{" + "codigoUnico='" + codigoUnico + ", nombres='" + nombres + ", apellidos='" + apellidos + ", rol=" + rol +'}';
     }
+
+    public abstract void consultarEntrada(Sistema sistema);
 }

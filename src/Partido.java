@@ -117,4 +117,31 @@ public class Partido {
     public void setPrecioVip(double precioVip){
         this.precioVip=precioVip;
     }
+
+    public boolean hayStock(Zona zona, int cantidad){
+        switch (zona) {
+            case GENERAL:
+                return this.entradasGeneralDisponibles>= cantidad;
+            case PREFERENCIAL:
+                return this.entradasPrefencialDisponibles >= cantidad;
+            case VIP:
+                return this.entradasVipDisponibles >= cantidad;    
+            default:
+                return false;
+        }
+    }
+
+    public void descontarStock(Zona zona, int cantidad){
+        if (hayStock(zona, cantidad)){
+            switch (zona) {
+            case GENERAL:
+                this.entradasGeneralDisponibles -= cantidad;
+            case PREFERENCIAL:
+                this.entradasPrefencialDisponibles -= cantidad;
+            case VIP:
+                this.entradasVipDisponibles -= cantidad;
+                break; 
+            }
+        }
+    }
 }
