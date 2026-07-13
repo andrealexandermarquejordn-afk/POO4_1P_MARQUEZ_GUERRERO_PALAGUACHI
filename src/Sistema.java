@@ -101,7 +101,6 @@ public class Sistema {
             String correo = datosUser[6];
             TipoUsuario rol = TipoUsuario.valueOf(datosUser[7]);    
 
-
             if (rol == TipoUsuario.A) {
                 for (int j = 1; j < lineasAficionados.size(); j++) {
                     String[] datosAficionado = lineasAficionados.get(j).split("\\|");
@@ -186,7 +185,7 @@ public class Sistema {
 
     public void cargarCompras() {
         ArrayList<String> lineas = ManejoArchivos.LeeFichero("compras.txt");
-        for (int i = 1; i < lineas.size(); i++) {
+        for (int i = 0; i < lineas.size(); i++) {
             String[] datos = lineas.get(i).split("\\|");
             try {
                 TipoCompra tipo = TipoCompra.valueOf(datos[1]);

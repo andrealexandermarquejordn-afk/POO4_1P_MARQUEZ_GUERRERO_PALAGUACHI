@@ -31,6 +31,8 @@ public class ReporteVenta {
     public Date getFechaReporte() { 
         return fechaReporte; 
     }
+
+
     @Override
     public String toString() {
         return "===== GENERAR REPORTE DE VENTAS =====\n" +
