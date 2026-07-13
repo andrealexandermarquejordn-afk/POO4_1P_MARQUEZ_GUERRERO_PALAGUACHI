@@ -17,8 +17,7 @@ public class Kit {
         this.disponibles = disponibles;
     }
 
-    //Metodos getters y setters
-
+    //Metodos getters
     public String getCodigo() {
         return codigo; 
     }
@@ -26,7 +25,8 @@ public class Kit {
         return nombre; 
     }
     public String getDescripcion() { 
-        return descripcion; }
+        return descripcion; 
+    }
     public ArrayList<String> getCodigosPartidosIncluidos() { 
         return codigosPartidosIncluidos; 
     }
@@ -35,6 +35,23 @@ public class Kit {
     }
     public int getDisponibles() { 
         return disponibles; 
+    }
+
+    //Metodos setters
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+    public void setCodigosPartidosIncluidos(ArrayList<String> codigosPartidosIncluidos) {
+        this.codigosPartidosIncluidos = codigosPartidosIncluidos;
+    }
+    public void setPrecio(double precio) {
+        this.precio = precio;
     }
     public void setDisponibles(int disponibles) { 
         this.disponibles = disponibles; 
