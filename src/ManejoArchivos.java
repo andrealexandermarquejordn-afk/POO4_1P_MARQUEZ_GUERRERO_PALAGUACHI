@@ -3,11 +3,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class ManejoArchivos {
-
     public static ArrayList<String> LeeFichero(String nombrearchivo) {
         ArrayList<String> lineas = new ArrayList<>();
         File archivo = null;
@@ -15,23 +15,27 @@ public class ManejoArchivos {
         BufferedReader br = null;
 
         try {
+            // Apertura del fichero y creacion de BufferedReader para poder
+            // hacer una lectura comoda (disponer del metodo readLine()).
             archivo = new File(nombrearchivo);
-            if (archivo.exists()) { 
-                fr = new FileReader(archivo, StandardCharsets.UTF_8);
-                br = new BufferedReader(fr);
+            fr = new FileReader(archivo,StandardCharsets.UTF_8);
+            br = new BufferedReader(fr);
 
-                String linea;
-                while ((linea = br.readLine()) != null) {
-                    lineas.add(linea);
-                }
+            // Lectura del fichero
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                //System.out.println(linea);
+                lineas.add(linea);
+
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            // En el finally cerramos el fichero, para asegurarnos
+            // que se cierra tanto si todo va bien como si salta 
+            // una excepcion.
             try {
-                if (null != br) {
-                    br.close();
-                }
                 if (null != fr) {
                     fr.close();
                 }
@@ -40,39 +44,41 @@ public class ManejoArchivos {
             }
         }
         return lineas;
+
     }
 
     public static void EscribirArchivo(String nombreArchivo, String linea) {
+
         FileWriter fichero = null;
         BufferedWriter bw = null;
-        
+      
         try {
-            fichero = new FileWriter(nombreArchivo, true);
+            fichero = new FileWriter(nombreArchivo,true);
             bw = new BufferedWriter(fichero);
-            bw.write(linea + "\n");
+            bw.write(linea+"\n");
+            //System.out.println("ksdsdlsd");
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             try {
-                if (null != bw) {
-                    bw.close();
-                }
+                // Nuevamente aprovechamos el finally para 
+                // asegurarnos que se cierra el fichero.
                 if (null != fichero) {
-                    fichero.close();
+                    //fichero.close();
+                    bw.close();
                 }
             } catch (Exception e2) {
                 e2.printStackTrace();
             }
         }
     }
-
     public static void EscribirArchivo(String nombreArchivo, ArrayList<String> lineas) {
         FileWriter fichero = null;
         BufferedWriter bw = null;
-            try {
+        try {
             fichero = new FileWriter(nombreArchivo, false);
             bw = new BufferedWriter(fichero);
-            
             for (String linea : lineas) {
                 bw.write(linea + "\n");
             }
@@ -80,15 +86,15 @@ public class ManejoArchivos {
             e.printStackTrace();
         } finally {
             try {
-                if (null != bw) {
+                if (null != bw)
                     bw.close();
-                }
-                if (null != fichero) {
+                if (null != fichero)
                     fichero.close();
-                }
             } catch (Exception e2) {
                 e2.printStackTrace();
             }
         }
     }
+
+
 }
