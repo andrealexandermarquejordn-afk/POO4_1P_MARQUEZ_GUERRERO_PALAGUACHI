@@ -7,13 +7,12 @@ public abstract class Usuario {
     protected String username;
     protected String password;
     protected String correo;
-    protected char rol;
-
+    protected TipoUsuario rol;
+  
     public Usuario() {
     }
 
-    public Usuario(String codigoUnico, String cedula, String nombres, String apellidos, String username,
-            String password, String correo, char rol) {
+    public Usuario(String codigoUnico, String cedula, String nombres, String apellidos, String username, String password, String correo, TipoUsuario rol) {
         this.codigoUnico = codigoUnico;
         this.cedula = cedula;
         this.nombres = nombres;
@@ -28,63 +27,65 @@ public abstract class Usuario {
         return false;
     }
 
-    public String getCodigoUnico() {
-        return codigoUnico;
-    }
-
+    //Metodos setters
     public void setCodigoUnico(String codigoUnico) {
         this.codigoUnico = codigoUnico;
-    }
-
-    public String getCedula() {
-        return cedula;
     }
 
     public void setCedula(String cedula) {
         this.cedula = cedula;
     }
 
-    public String getNombres() {
-        return nombres;
-    }
-
     public void setNombres(String nombres) {
         this.nombres = nombres;
-    }
-
-    public String getApellidos() {
-        return apellidos;
     }
 
     public void setApellidos(String apellidos) {
         this.apellidos = apellidos;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
     }
 
     public void setPassword(String password) {
         this.password = password;
     }
 
-    public String getCorreo() {
-        return correo;
-    }
-
     public void setCorreo(String correo) {
         this.correo = correo;
     }
 
-    public char getRol() {
+    //Metodos getters
+    public String getCodigoUnico() {
+        return codigoUnico;
+    }
+
+    public String getCedula() {
+        return cedula;
+    }
+    
+        public String getNombres() {
+        return nombres;
+    }
+
+    public String getApellidos() {
+        return apellidos;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+    
+    public String getPassword() {
+        return password;
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public TipoUsuario getRol() {
         return rol;
     }
 
