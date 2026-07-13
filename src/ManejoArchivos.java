@@ -45,7 +45,7 @@ public class ManejoArchivos {
     public static void EscribirArchivo(String nombreArchivo, String linea) {
         FileWriter fichero = null;
         BufferedWriter bw = null;
-      
+        
         try {
             fichero = new FileWriter(nombreArchivo, true);
             bw = new BufferedWriter(fichero);
@@ -69,9 +69,7 @@ public class ManejoArchivos {
     public static void EscribirArchivo(String nombreArchivo, ArrayList<String> lineas) {
         FileWriter fichero = null;
         BufferedWriter bw = null;
-      
-        try {
-            // Sin el parámetro 'true', el archivo se sobrescribe desde cero
+            try {
             fichero = new FileWriter(nombreArchivo, false);
             bw = new BufferedWriter(fichero);
             
