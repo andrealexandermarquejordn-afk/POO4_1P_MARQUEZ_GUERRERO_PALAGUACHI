@@ -2,13 +2,14 @@ public class Organizador extends Usuario {
     private String empresa;
     private String cargo;
 
-    public Organizador(String codigoUnico, String cedula, String nombres, String apellidos, String usuario, String contrasena, String correo, String rol, String empresa, String cargo) {
-        super(codigoUnico, cedula, nombres, apellidos, usuario, contrasena, correo, rol);
+    public Organizador(String codigoUnico, String cedula, String nombres, String apellidos, String username,
+            String password, String correo, char rol, String empresa, String cargo) {
+        super(codigoUnico, cedula, nombres, apellidos, username, password, correo, rol);
         this.empresa = empresa;
         this.cargo = cargo;
     }
     @Override
-    public void consultarEntradas() {
+    public void consultarEntrada(Sistema sistema) {
         System.out.println("===== CONSULTAR TODAS LAS COMPRAS (Modo Organizador) =====");
         System.out.println("Organizador a cargo: " + getNombres() + " " + getApellidos() + " - " + this.cargo);
     }

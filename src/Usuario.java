@@ -1,5 +1,5 @@
 public abstract class Usuario {
-    
+
     protected String codigoUnico;
     protected String cedula;
     protected String nombres;
@@ -9,11 +9,11 @@ public abstract class Usuario {
     protected String correo;
     protected char rol;
 
-
-public Usuario() {
+    public Usuario() {
     }
 
-public Usuario(String codigoUnico, String cedula, String nombres, String apellidos, String username, String password, String correo, char rol) {
+    public Usuario(String codigoUnico, String cedula, String nombres, String apellidos, String username,
+            String password, String correo, char rol) {
         this.codigoUnico = codigoUnico;
         this.cedula = cedula;
         this.nombres = nombres;
@@ -24,9 +24,10 @@ public Usuario(String codigoUnico, String cedula, String nombres, String apellid
         this.rol = rol;
     }
 
-public boolean iniciarSesion(String username, String password) {
-        return false; 
+    public boolean iniciarSesion(String username, String password) {
+        return false;
     }
+
     public String getCodigoUnico() {
         return codigoUnico;
     }
@@ -88,7 +89,8 @@ public boolean iniciarSesion(String username, String password) {
     }
 
     public String toString() {
-        return "Usuario{" + "codigoUnico='" + codigoUnico + ", nombres='" + nombres + ", apellidos='" + apellidos + ", rol=" + rol +'}';
+        return "Usuario{" + "codigoUnico='" + codigoUnico + ", nombres='" + nombres + ", apellidos='" + apellidos
+                + ", rol=" + rol + '}';
     }
 
     public abstract void consultarEntrada(Sistema sistema);
