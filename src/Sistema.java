@@ -10,41 +10,37 @@ public class Sistema {
     private List<Compra> compras;
 
     private SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
-
     public Sistema() {
         this.usuarios = new ArrayList<>();
         this.partidos = new ArrayList<>();
         this.kits = new ArrayList<>();
         this.compras = new ArrayList<>();
     }
-    //Metodos getters
-    public List<Usuario> getUsuarios() { 
-        return usuarios; 
+    // Muestra en consola todos los partidos disponibles, con sus zonas, disponibilidad y precios.
+    public void consultarPartidos() {
+        System.out.println("Partidos encontrados:\n");
+        int contador = 1;
+        for (Partido p : this.partidos) {
+            System.out.println(contador + ". Código: " + p.getCodigo());
+            System.out.println("   Partido: " + p.getSeleccionLocal() + " vs " + p.getSeleccionVisitante());
+            System.out.println("   Fecha: " + formatoFecha.format(p.getFecha()));
+            System.out.println("   Estadio: " + p.getEstadio());
+            System.out.println("   Ciudad: " + p.getCiudad());
+            System.out.println("   Fase: " + p.getFase());
+            System.out.println();
+            System.out.println("   Zonas disponibles:");
+            System.out.println("   - GENERAL       | Disponibles: " + p.getEntradasGeneralDisponibles()
+                    + " | Precio: $" + String.format("%.2f", p.getPrecioGeneral()));
+            System.out.println("   - PREFERENCIAL  | Disponibles: " + p.getEntradasPrefencialDisponibles()
+                    + " | Precio: $" + String.format("%.2f", p.getPrecioPreferencial()));
+            System.out.println("   - VIP           | Disponibles: " + p.getEntradasVipDisponibles()
+                    + " | Precio: $" + String.format("%.2f", p.getPrecioVip()));
+            System.out.println("\n--------------------------------------------------");
+            contador++;
+        }
     }
-    public List<Partido> getPartidos() { 
-        return partidos; 
-    }
-    public List<Kit> getKits() { 
-        return kits; 
-    }
-    public List<Compra> getCompras() { 
-        return compras; 
-    }
-    //Metodos setters
-    public void setUsuarios(List<Usuario> usuarios) { 
-        this.usuarios = usuarios; 
-    }
-    public void setPartidos(List<Partido> partidos) { 
-        this.partidos = partidos; 
-    }
-    public void setKits(List<Kit> kits) { 
-        this.kits = kits; 
-    }
-    public void setCompras(List<Compra> compras) { 
-        this.compras = compras; 
-    }
-
-    public void notificar(Aficionado aficionado, Compra compra) {
+ 
+    public void notificar(Aficionado aficionado, Compra compra, Zona zona) {
         System.out.println("De: correoSistema@mundial2026.com");
         System.out.println("Para: " + aficionado.getCorreo());
         System.out.println("Asunto: Compra de entrada realizada");
@@ -55,7 +51,7 @@ public class Sistema {
             System.out.println("Partido: " + partido.getSeleccionLocal() + " vs " + partido.getSeleccionVisitante());
             System.out.println("Código del partido: " + partido.getCodigo());
         }
-        
+        System.out.println("Zona: " + zona);
         System.out.println("Cantidad: " + compra.getCantidad());
         System.out.println("Valor pagado: $" + String.format("%.2f", compra.getValorPagado()));
         System.out.println("Gracias por adquirir sus entradas para el Mundial. Recuerde conservar el código de compra para futuras consultas.");
@@ -103,9 +99,10 @@ public class Sistema {
             String username = datosUser[4];
             String password = datosUser[5];
             String correo = datosUser[6];
-            char rol = datosUser[7].charAt(0);
+            TipoUsuario rol = TipoUsuario.valueOf(datosUser[7]);    
 
-            if (rol == 'A') {
+
+            if (rol == TipoUsuario.A) {
                 for (int j = 1; j < lineasAficionados.size(); j++) {
                     String[] datosAficionado = lineasAficionados.get(j).split("\\|");
                     if (datosAficionado[0].equals(codigo)) {
@@ -113,7 +110,7 @@ public class Sistema {
                         break;
                     }
                 }
-            } else if (rol == 'O') {
+            } else if (rol == TipoUsuario.O) {
                 for (int j = 1; j < lineasOrganizadores.size(); j++) {
                     String[] datosOrganizador = lineasOrganizadores.get(j).split("\\|");
                     if (datosOrganizador[0].equals(codigo)) {
@@ -125,21 +122,51 @@ public class Sistema {
         }
     }
 
+    public ReporteVenta generarReporte() {
+        int totalEntrada = 0;
+        int totalKit = 0;
+        double montoTotal = 0.0;
+        
+        for (Compra c : this.compras) {
+            if (c.getTipo() == TipoCompra.ENTRADA) {
+                totalEntrada++;
+            } else if (c.getTipo() == TipoCompra.KIT) {
+                totalKit++;
+            }
+            
+            montoTotal += c.getValorPagado();
+        }
+        
+        return new ReporteVenta(this.compras.size(), totalEntrada, totalKit, montoTotal, new Date());
+    }
+
+
     public void cargarPartidos() {
         ArrayList<String> lineas = ManejoArchivos.LeeFichero("partidos.txt");
         for (int i = 1; i < lineas.size(); i++) {
             String[] datos = lineas.get(i).split("\\|");
             try {
                 Date fecha = formatoFecha.parse(datos[3]);
-                double pGeneral = (datos[10].contains("Fase de grupos")) ? 45.00 : 60.00;
-                double pPreferencial = (datos[10].contains("Fase de grupos")) ? 85.00 : 100.00;
-                double pVip = (datos[10].contains("Fase de grupos")) ? 150.00 : 180.00;
+                String fase = datos[10];
 
-                partidos.add(new Partido(datos[0], datos[1], datos[2], fecha, datos[4], datos[5], 
-                                         Integer.parseInt(datos[6]), datos[10], Integer.parseInt(datos[7]), 
-                                         Integer.parseInt(datos[8]), Integer.parseInt(datos[9]), pGeneral, pPreferencial, pVip));
+                double pGeneral;
+                double pPreferencial;
+                double pVip;
+
+                if (fase.contains("Fase de grupos")) {
+                    pGeneral = 45.00;
+                    pPreferencial = 85.00;
+                    pVip = 150.00;
+                } else {
+                    pGeneral = 60.00;
+                    pPreferencial = 100.00;
+                    pVip = 180.00;
+                }
+
+                partidos.add(new Partido(datos[0], datos[1], datos[2], fecha, datos[4], datos[5], Integer.parseInt(datos[6]), fase,
+                Integer.parseInt(datos[7]), Integer.parseInt(datos[8]), Integer.parseInt(datos[9]), pGeneral, pPreferencial, pVip));
             } catch (Exception e) {
-                System.out.println("Error parseando fecha: " + e.getMessage());
+                System.out.println("Error al convertir la fecha del partido: " + e.getMessage());
             }
         }
     }
@@ -153,27 +180,37 @@ public class Sistema {
             for (String cp : separarCodigos) {
                 codigosPartidosIncluidos.add(cp.trim());
             }
-            kits.add(new Kit(
-                    datos[0],
-                    datos[1],
-                    datos[2],
-                    codigosPartidosIncluidos,
-                    Double.parseDouble(datos[4]),
-                    Integer.parseInt(datos[5])));
+            kits.add(new Kit(datos[0], datos[1], datos[2], codigosPartidosIncluidos, Double.parseDouble(datos[4]), Integer.parseInt(datos[5])));
         }
 }
+
+    public void cargarCompras() {
+        ArrayList<String> lineas = ManejoArchivos.LeeFichero("compras.txt");
+        for (int i = 1; i < lineas.size(); i++) {
+            String[] datos = lineas.get(i).split("\\|");
+            try {
+                TipoCompra tipo = TipoCompra.valueOf(datos[1]);
+                Date fecha = formatoFecha.parse(datos[3]);
+                int cantidad = Integer.parseInt(datos[4]);
+                double valorPagado = Double.parseDouble(datos[5]);
+                Compra compra = new Compra(datos[0], tipo, datos[2], fecha, cantidad, valorPagado, datos[6]);
+                compras.add(compra);
+            } catch (Exception e) {
+                System.out.println("Error al leer los datos de la compra: " + e.getMessage());
+            }
+        }
+    }
 
     public void registrarCompra(Compra compra) {
         if (compra != null) {
             this.compras.add(compra);
-            String lineaArchivo = compra.getCodigoCompra() + "|" + compra.getTipo() + "|" + compra.getCodigoReferencia() + "|" +
-                                  formatoFecha.format(compra.getFechaCompra()) + "|" + compra.getCantidad() + "|" +
-                                  compra.getValorPagado() + "|" + compra.getCodigoAficionado();
+            String lineaArchivo = compra.getCodigoCompra() + "|" + compra.getTipo() + "|" + compra.getCodigoReferencia() + 
+                "|" + formatoFecha.format(compra.getFechaCompra()) + "|" + compra.getCantidad() +  
+                "|" + compra.getValorPagado() + "|" + compra.getCodigoAficionado();
             ManejoArchivos.EscribirArchivo("compras.txt", lineaArchivo);
         }
     }
 
-    // Métodos de búsqueda requeridos
     public Partido buscarPartido(String codigo) {
         for (Partido p : partidos) {
             if (p.getCodigo().equalsIgnoreCase(codigo)) return p;
@@ -188,4 +225,77 @@ public class Sistema {
         return null;
     }
 
+public void comprar(Partido partido, Aficionado aficionado, Zona zona, int cantidad) {
+        if (partido.hayStock(zona, cantidad)) {
+            partido.descontarStock(zona, cantidad);
+            double precioUnitario = 0;
+            switch(zona) {
+                case GENERAL: 
+                    precioUnitario = partido.getPrecioGeneral(); 
+                    break;
+                case PREFERENCIAL: 
+                    precioUnitario = partido.getPrecioPreferencial(); 
+                    break;
+                case VIP: 
+                    precioUnitario = partido.getPrecioVip(); 
+                    break;
+            }
+            double valorTotal = precioUnitario * cantidad;
+            Compra nuevaCompra = new Compra(TipoCompra.ENTRADA, partido.getCodigo(), cantidad, valorTotal, aficionado.getCodigoUnico());
+            registrarCompra(nuevaCompra);
+            notificar(aficionado, nuevaCompra, zona);
+        } else {
+            System.out.println("Error: No hay stock suficiente para la zona seleccionada.");
+        }
+    }
+
+    public void comprar(Kit kit, Aficionado aficionado, int cantidad) {
+        if (kit.getDisponibles() >= cantidad) {
+            kit.setDisponibles(kit.getDisponibles() - cantidad);
+            double valorTotal = kit.getPrecio() * cantidad;
+            Compra nuevaCompra = new Compra(TipoCompra.KIT, kit.getCodigo(), cantidad, valorTotal, aficionado.getCodigoUnico());
+            registrarCompra(nuevaCompra);
+            notificar(aficionado, nuevaCompra, kit);
+        } else {
+            System.out.println("Error: No hay suficientes kits disponibles.");
+        }
+    }
+
+    public Usuario autenticarUsuario(String username, String password) {
+        for (Usuario u : this.usuarios) {
+            if (u.getUsername().equals(username) && u.getPassword().equals(password)) {
+                return u;
+            }
+        }
+        return null; 
+    }
+
+    //Metodos setters
+    public void setUsuarios(List<Usuario> usuarios) { 
+        this.usuarios = usuarios; 
+    }
+    public void setPartidos(List<Partido> partidos) { 
+        this.partidos = partidos; 
+    }
+    public void setKits(List<Kit> kits) { 
+        this.kits = kits; 
+    }
+    public void setCompras(List<Compra> compras) { 
+        this.compras = compras; 
+    }
+
+    //Metodos getters
+    public List<Usuario> getUsuarios() { 
+        return usuarios; 
+    }
+
+    public List<Partido> getPartidos() { 
+        return partidos; 
+    }
+    public List<Kit> getKits() { 
+        return kits; 
+    }
+    public List<Compra> getCompras() { 
+        return compras; 
+    }
 }
