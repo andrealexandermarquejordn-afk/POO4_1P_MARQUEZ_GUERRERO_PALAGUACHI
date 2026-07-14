@@ -98,8 +98,7 @@ public class Sistema {
                 + "Total de compras registradas: " + reporte.getTotalCompras() + "\n"
                 + "Total de compras de entradas individuales: " + reporte.getTotalEntrada() + "\n"
                 + "Total de compras de kits: " + reporte.getTotalKit() + "\n"
-                + "Monto total recaudado: $" + String.format("%.2f", reporte.getMontoTotal()) + "\n"
-                + "Este reporte corresponde a las compras registradas en el archivo compras.txt.";
+                + "Monto total recaudado: $" + String.format("%.2f", reporte.getMontoTotal());
 
         CorreoElectronico.enviarCorreo(organizador.getCorreo(), "Reporte de compras registradas", cuerpo);
     }
