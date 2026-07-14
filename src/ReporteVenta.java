@@ -6,7 +6,6 @@ public class ReporteVenta {
     private double montoTotal;
     private Date fechaReporte;
 
-    // Constructor
     public ReporteVenta(int totalCompras, int totalEntrada, int totalKit, double montoTotal, Date fechaReporte) {
         this.totalCompras = totalCompras;
         this.totalEntrada = totalEntrada;

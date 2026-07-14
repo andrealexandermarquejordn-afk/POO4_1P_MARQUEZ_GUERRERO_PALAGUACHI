@@ -2,6 +2,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
+
         Scanner scanner = new Scanner(System.in);
         Sistema sistema = new Sistema();
         sistema.cargarUsuarios();
@@ -10,13 +11,15 @@ public class Main {
         sistema.cargarCompras();
         boolean ejecutando = true;
 
+
+
         while (ejecutando) {
             System.out.println("    SISTEMA DE VENTA - MUNDIAL 2026     ");
             System.out.print("Ingrese su usuario (o 'salir' para apagar): ");
             String username = scanner.nextLine();
             
             if (username.equalsIgnoreCase("salir")) {
-                System.out.println("Apagando el sistema. ¡Hasta pronto!");
+                System.out.println("Saliendo del sistema.");
                 ejecutando = false;
                 break;
             }
@@ -33,7 +36,7 @@ public class Main {
                 if (!identidadConfirmada) {
                     System.out.println("Verificación fallida.");
                     System.out.println("Por motivos de seguridad se cerrará la sesión.");
-                    System.out.println("Saliendo del sistema...");
+                    System.out.println("Saliendo del sistema..");
                     ejecutando = false;
                     break;
                 }
@@ -86,7 +89,7 @@ public class Main {
         while (enMenu) {
             System.out.println("\n--- MENÚ AFICIONADO ---");
             System.out.println("1. Consultar Partidos");
-            System.out.println("2. Comprar Entrada (Partido)");
+            System.out.println("2. Comprar Entrada ");
             System.out.println("3. Comprar Kit de Entradas");
             System.out.println("4. Consultar Mis Compras");
             System.out.println("5. Cerrar Sesión");
@@ -118,8 +121,35 @@ public class Main {
                             System.out.print("Ingrese la cantidad de entradas: ");
                             try {
                                 int cantidad = Integer.parseInt(scanner.nextLine());
-                                // Aplicamos la sobrecarga: comprar Partido
-                                sistema.comprar(partido, aficionado, zonaSeleccionada, cantidad);
+                                
+                                if (partido.hayStock(zonaSeleccionada, cantidad)) {
+                                    
+                                    double precioUnitario = 0;
+                                    if (zonaSeleccionada == Zona.GENERAL) precioUnitario = partido.getPrecioGeneral();
+                                    else if (zonaSeleccionada == Zona.PREFERENCIAL) precioUnitario = partido.getPrecioPreferencial();
+                                    else if (zonaSeleccionada == Zona.VIP) precioUnitario = partido.getPrecioVip();
+                                    
+                                    double totalPagar = precioUnitario * cantidad;
+                                    System.out.println("\nTotal a pagar: $" + String.format("%.2f", totalPagar));
+                                    
+                                    System.out.print("Ingrese número de tarjeta de crédito/débito: ");
+                                    String tarjeta = scanner.nextLine();
+                                    
+                                    String ultimosDigitos;
+                                    if (tarjeta.length() >= 4) {
+                                        ultimosDigitos = tarjeta.substring(tarjeta.length() - 4);
+                                    } else {
+                                        ultimosDigitos = tarjeta;
+                                    }
+                                    System.out.println("Procesando pago con tarjeta terminada en " + ultimosDigitos);
+                                    System.out.println("¡Pago exitoso!\n");
+                                    
+                                    sistema.comprar(partido, aficionado, zonaSeleccionada, cantidad);
+                                    System.out.println("Su compra se generó exitosamente y se envio el comprobante a su correo.");
+                                    
+                                } else {
+                                    System.out.println("Lo sentimos, no hay stock suficiente para esa zona.");
+                                }
                             } catch (NumberFormatException e) {
                                 System.out.println("Cantidad inválida.");
                             }
@@ -132,6 +162,7 @@ public class Main {
                     break;
 
                 case "3":
+                    sistema.consultarKits();
                     System.out.print("Ingrese el código del Kit: ");
                     String codKit = scanner.nextLine();
                     Kit kit = sistema.buscarKit(codKit);
@@ -140,8 +171,30 @@ public class Main {
                         System.out.print("Ingrese la cantidad de kits a comprar: ");
                         try {
                             int cantidad = Integer.parseInt(scanner.nextLine());
-                            // Aplicamos la sobrecarga: comprar Kit
-                            sistema.comprar(kit, aficionado, cantidad);
+                            
+                            if (kit.getDisponibles() >= cantidad) {
+                                
+                                double totalKit = kit.getPrecio() * cantidad;
+                                System.out.println("\nTotal a pagar: $" + String.format("%.2f", totalKit));
+                                
+                                System.out.print("Ingrese número de tarjeta de crédito/débito: ");
+                                String tarjeta = scanner.nextLine();
+                                
+                                String ultimosDigitos;
+                                    if (tarjeta.length() >= 4) {
+                                        ultimosDigitos = tarjeta.substring(tarjeta.length() - 4);
+                                    } else {
+                                        ultimosDigitos = tarjeta;
+                                    } 
+                                    System.out.println("Procesando pago con tarjeta terminada en " + ultimosDigitos);
+                                    System.out.println("¡Pago exitoso!\n");
+                                
+                                sistema.comprar(kit, aficionado, cantidad);
+                                System.out.println("Su paquete de kits se generó exitosamente y se envio el comprobante a su correo.");
+                                
+                            } else {
+                                System.out.println("Lo sentimos, no hay suficientes kits disponibles.");
+                            }
                         } catch (NumberFormatException e) {
                             System.out.println("Cantidad inválida.");
                         }
