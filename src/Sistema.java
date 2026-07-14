@@ -8,15 +8,16 @@ public class Sistema {
     private List<Partido> partidos;
     private List<Kit> kits;
     private List<Compra> compras;
-
     private SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+
     public Sistema() {
         this.usuarios = new ArrayList<>();
         this.partidos = new ArrayList<>();
         this.kits = new ArrayList<>();
         this.compras = new ArrayList<>();
     }
-    // Muestra en consola todos los partidos disponibles, con sus zonas, disponibilidad y precios.
+
+    // Muestra en consola todos los partidos disponibles.
     public void consultarPartidos() {
         System.out.println("Partidos encontrados:\n");
         int contador = 1;
@@ -40,49 +41,67 @@ public class Sistema {
         }
     }
  
-    public void notificar(Aficionado aficionado, Compra compra, Zona zona) {
-        System.out.println("De: correoSistema@mundial2026.com");
-        System.out.println("Para: " + aficionado.getCorreo());
-        System.out.println("Asunto: Compra de entrada realizada");
-        System.out.println("Estimado/a " + aficionado.getNombres() + " " + aficionado.getApellidos() + ",");
-        System.out.println("Su compra ha sido registrada exitosamente con el código " + compra.getCodigoCompra() + " el día " + compra.getFechaCompra() + ".");
-        Partido partido = buscarPartido(compra.getCodigoReferencia());
-        if (partido != null) {
-            System.out.println("Partido: " + partido.getSeleccionLocal() + " vs " + partido.getSeleccionVisitante());
-            System.out.println("Código del partido: " + partido.getCodigo());
+     public void consultarKits() {
+        System.out.println("===== KITS DISPONIBLES =====\n");
+        int contador = 1;
+        for (Kit k : this.kits) {
+            System.out.println(contador + ". " + k.getNombre() + " (Código: " + k.getCodigo() + ")");
+            System.out.println("Incluye:");
+            for (String codigoPartido : k.getCodigosPartidosIncluidos()) {
+                Partido p = buscarPartido(codigoPartido);
+                if (p != null) {
+                    System.out.println("- " + p.getSeleccionLocal() + " vs " + p.getSeleccionVisitante());
+                }
+            }
+            System.out.println();
+            System.out.println("Precio: $" + String.format("%.2f", k.getPrecio()));
+            System.out.println("Disponibles: " + k.getDisponibles());
+            System.out.println();
+            contador++;
         }
-        System.out.println("Zona: " + zona);
-        System.out.println("Cantidad: " + compra.getCantidad());
-        System.out.println("Valor pagado: $" + String.format("%.2f", compra.getValorPagado()));
-        System.out.println("Gracias por adquirir sus entradas para el Mundial. Recuerde conservar el código de compra para futuras consultas.");
-        System.out.println("------------------------------------------------");
     }
+
+    public void notificar(Aficionado aficionado, Compra compra, Zona zona) {
+        Partido partido = buscarPartido(compra.getCodigoReferencia());
+
+        String cuerpo = "Estimado/a " + aficionado.getNombres() + " " + aficionado.getApellidos() + ",\n"
+                + "Su compra ha sido registrada exitosamente con el código " + compra.getCodigoCompra()
+                + " el día " + compra.getFechaCompra() + ".\n";
+        if (partido != null) {
+            cuerpo += "Partido: " + partido.getSeleccionLocal() + " vs " + partido.getSeleccionVisitante() + "\n";
+            cuerpo += "Código del partido: " + partido.getCodigo() + "\n";
+        }
+        cuerpo += "Zona: " + zona + "\n";
+        cuerpo += "Cantidad: " + compra.getCantidad() + "\n";
+        cuerpo += "Valor pagado: $" + String.format("%.2f", compra.getValorPagado()) + "\n";
+        cuerpo += "Gracias por adquirir sus entradas para el Mundial. Recuerde conservar el código de compra para futuras consultas.";
+
+        CorreoElectronico.enviarCorreo(aficionado.getCorreo(), "Compra de entrada realizada", cuerpo);
+    }
+
     public void notificar(Aficionado aficionado, Compra compra, Kit kit) {
-        System.out.println("De: correoSistema@mundial2026.com");
-        System.out.println("Para: " + aficionado.getCorreo());
-        System.out.println("Asunto: Compra de Kit de Entradas realizada");
-        System.out.println("Estimado/a " + aficionado.getNombres() + " " + aficionado.getApellidos() + ",");
-        System.out.println("Su compra de paquete ha sido registrada exitosamente con el código " + compra.getCodigoCompra() + " el día " + compra.getFechaCompra() + ".");
-        System.out.println("Detalle del Kit Adquirido: " + kit.getNombre() + " (" + kit.getDescripcion() + ")");
-        System.out.println("Cantidad de Kits: " + compra.getCantidad());
-        System.out.println("Valor pagado: $" + String.format("%.2f", compra.getValorPagado()));
-        System.out.println("Gracias por adquirir sus paquetes oficiales para el Mundial. ¡Disfrute el evento!");
-        System.out.println("--------------------------------------------");
+        String cuerpo = "Estimado/a " + aficionado.getNombres() + " " + aficionado.getApellidos() + ",\n"
+                + "Su compra de paquete ha sido registrada exitosamente con el código " + compra.getCodigoCompra()
+                + " el día " + compra.getFechaCompra() + ".\n"
+                + "Detalle del Kit Adquirido: " + kit.getNombre() + " (" + kit.getDescripcion() + ")\n"
+                + "Cantidad de Kits: " + compra.getCantidad() + "\n"
+                + "Valor pagado: $" + String.format("%.2f", compra.getValorPagado()) + "\n"
+                + "Gracias por adquirir sus paquetes oficiales para el Mundial. ¡Disfrute el evento!";
+
+        CorreoElectronico.enviarCorreo(aficionado.getCorreo(), "Compra de Kit de Entradas realizada", cuerpo);
     }
 
     public void notificar(Organizador organizador, ReporteVenta reporte) {
-        System.out.println("De: correoSistema@mundial2026.com");
-        System.out.println("Para: " + organizador.getCorreo());
-        System.out.println("Asunto: Reporte de compras registradas");
-        System.out.println("Estimado/a " + organizador.getNombres() + " " + organizador.getApellidos() + ",");
-        System.out.println("Se ha generado el reporte de compras del sistema.");
-        System.out.println("Fecha de generación del reporte: " + reporte.getFechaReporte());
-        System.out.println("Total de compras registradas: " + reporte.getTotalCompras());
-        System.out.println("Total de compras de entradas individuales: " + reporte.getTotalEntrada());
-        System.out.println("Total de compras de kits: " + reporte.getTotalKit());
-        System.out.println("Monto total recaudado: $" + String.format("%.2f", reporte.getMontoTotal()));
-        System.out.println("Este reporte corresponde a las compras registradas en el archivo compras.txt.");
-        System.out.println("-----------------------------------------------------");
+        String cuerpo = "Estimado/a " + organizador.getNombres() + " " + organizador.getApellidos() + ",\n"
+                + "Se ha generado el reporte de compras del sistema.\n"
+                + "Fecha de generación del reporte: " + reporte.getFechaReporte() + "\n"
+                + "Total de compras registradas: " + reporte.getTotalCompras() + "\n"
+                + "Total de compras de entradas individuales: " + reporte.getTotalEntrada() + "\n"
+                + "Total de compras de kits: " + reporte.getTotalKit() + "\n"
+                + "Monto total recaudado: $" + String.format("%.2f", reporte.getMontoTotal()) + "\n"
+                + "Este reporte corresponde a las compras registradas en el archivo compras.txt.";
+
+        CorreoElectronico.enviarCorreo(organizador.getCorreo(), "Reporte de compras registradas", cuerpo);
     }
 
     public void cargarUsuarios() {
