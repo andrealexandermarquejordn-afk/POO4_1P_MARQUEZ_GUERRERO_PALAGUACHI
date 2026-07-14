@@ -4,8 +4,8 @@ import javax.mail.internet.*;
 
 public class CorreoElectronico {
 
-    private static final String MI_CORREO = "mauricioguerrero2007@gmail.com";
-    private static final String MI_CLAVE_APP = "mick awok fjyh pjje";
+    private static final String MI_CORREO = "mundialprincipal2026@gmail.com";
+    private static final String MI_CLAVE_APP = "aajp msxo ahld pstz";
 
     public static void enviarCorreo(String destinatario, String asunto, String cuerpo) {
 
