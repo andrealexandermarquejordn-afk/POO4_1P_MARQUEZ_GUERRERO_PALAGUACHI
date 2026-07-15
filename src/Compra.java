@@ -9,7 +9,6 @@ public class Compra {
     private int cantidad;
     private double valorPagado;
     private String codigoAficionado;
-    private String codigoAficionado
     
     public Compra(TipoCompra tipo, String codigoReferencia, int cantidad, double valorPagado, String codigoAficionado){
         contadorCompras++;
