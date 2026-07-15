@@ -31,21 +31,31 @@ public class Main {
         sistema.cargarPartidos();
         sistema.cargarKits();
         sistema.cargarCompras();
-        boolean ejecutando = true;
+        boolean appActiva = true;
 
+        while (appActiva) {
+            System.out.println("\n " + "    SISTEMA DE VENTA - MUNDIAL 2026     ");
+            ArrayList<Object> lista = sistema.iniciarSesion();
+            
+            // Evaluamos el resultado del inicio de sesión
+            boolean reintentarLogin = (boolean) lista.get(0);
+            Object usuarioActivo = lista.get(1);
 
-
-        while (ejecutando) {
-            System.out.println("\n "+ "    SISTEMA DE VENTA - MUNDIAL 2026     ");
-            ArrayList<Object> lista  = sistema.iniciarSesion();
-            ejecutando=(boolean)lista.get(0);
-            if (!ejecutando){
-                if (lista.get(1) instanceof Aficionado) {
-                    Aficionado aficionado = (Aficionado) lista.get(1);
+            if (!reintentarLogin) {
+                if (usuarioActivo instanceof Aficionado) {
+                    Aficionado aficionado = (Aficionado) usuarioActivo;
                     menuAficionado(scanner, sistema, aficionado);
-                } else if (lista.get(1) instanceof Organizador) {
-                    Organizador organizador = (Organizador) lista.get(1);
+                    // Al salir de menuAficionado (Cerrar Sesión), appActiva sigue en true, 
+                    // por lo que el ciclo volverá a pedir iniciarSesion().
+                } else if (usuarioActivo instanceof Organizador) {
+                    Organizador organizador = (Organizador) usuarioActivo;
                     menuOrganizador(scanner, sistema, organizador);
+                    // Al salir de menuOrganizador, también volverá al inicio.
+                } else {
+                    // Si el inicio de sesión terminó (!reintentarLogin) pero no hay un usuario válido (null),
+                    // significa que el usuario seleccionó la opción de "Salir" de la aplicación.
+                    System.out.println("Saliendo del sistema. ¡Gracias por usar la plataforma!");
+                    appActiva = false;
                 }
             }
         }

@@ -102,7 +102,6 @@ public class ManejoArchivos {
             }
         }
     }
-<<<<<<< HEAD
     
     /**
      * Escribe múltiples líneas de texto en un archivo.
@@ -138,6 +137,4 @@ public class ManejoArchivos {
     }
 
 
-=======
->>>>>>> f7fb446885ee19b057686b6ccea74131c14cea2f
 }
