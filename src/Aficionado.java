@@ -6,8 +6,6 @@ public class Aficionado extends Usuario{
         this.celular = celular;
         this.paisFavorito = paisFavorito;
     }
-
-
     @Override
     public void consultarEntrada(Sistema sistema){
         System.out.println("Mis Compras (Aficionado: " + getNombres() + ")");
@@ -22,8 +20,6 @@ public class Aficionado extends Usuario{
             System.out.println("No tienes compras registradas.");
         }
     }
-
-    
     //Metodos getters
     public String getCelular(){
         return celular; 
