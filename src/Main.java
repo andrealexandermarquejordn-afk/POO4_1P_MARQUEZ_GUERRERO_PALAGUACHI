@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
@@ -14,74 +15,23 @@ public class Main {
 
 
         while (ejecutando) {
-            System.out.println("    SISTEMA DE VENTA - MUNDIAL 2026     ");
-            System.out.print("Ingrese su usuario (o 'salir' para apagar): ");
-            String username = scanner.nextLine();
-            
-            if (username.equalsIgnoreCase("salir")) {
-                System.out.println("Saliendo del sistema.");
-                ejecutando = false;
-                break;
-            }
-
-            System.out.print("Ingrese su contraseña: ");
-            String password = scanner.nextLine();
-            Usuario usuarioActual = sistema.autenticarUsuario(username, password);
-
-            if (usuarioActual != null) {
-                System.out.println("Usuario autenticado correctamente.");
-
-                boolean identidadConfirmada = verificarIdentidad(scanner, usuarioActual);
-
-                if (!identidadConfirmada) {
-                    System.out.println("Verificación fallida.");
-                    System.out.println("Por motivos de seguridad se cerrará la sesión.");
-                    System.out.println("Saliendo del sistema..");
-                    ejecutando = false;
-                    break;
-                }
-
-                System.out.println("Identidad confirmada.\n");
-
-                if (usuarioActual instanceof Aficionado) {
-                    Aficionado aficionado = (Aficionado) usuarioActual;
+            System.out.println("\n "+ "    SISTEMA DE VENTA - MUNDIAL 2026     ");
+            ArrayList<Object> lista  = sistema.iniciarSesion();
+            ejecutando=(boolean)lista.get(0);
+            if (!ejecutando){
+                if (lista.get(1) instanceof Aficionado) {
+                    Aficionado aficionado = (Aficionado) lista.get(1);
                     menuAficionado(scanner, sistema, aficionado);
-                } else if (usuarioActual instanceof Organizador) {
-                    Organizador organizador = (Organizador) usuarioActual;
+                } else if (lista.get(1) instanceof Organizador) {
+                    Organizador organizador = (Organizador) lista.get(1);
                     menuOrganizador(scanner, sistema, organizador);
                 }
-            } else {
-                System.out.println("\n Usuario o contraseña incorrectos. Intente de nuevo.\n");
             }
         }
         scanner.close();
     }
 
-    private static boolean verificarIdentidad(Scanner scanner, Usuario usuario) {
-        String respuesta;
 
-        if (usuario instanceof Aficionado) {
-            Aficionado aficionado = (Aficionado) usuario; 
-            System.out.println("Rol detectado: AFICIONADO");
-            System.out.println("Bienvenido/a, " + aficionado.getNombres() + " " + aficionado.getApellidos());
-            System.out.println("Celular registrado: " + aficionado.getCelular());
-            System.out.print("¿Este número de celular es correcto? (S/N): ");
-            respuesta = scanner.nextLine();
-
-        } else if (usuario instanceof Organizador) {
-            Organizador organizador = (Organizador) usuario; 
-            System.out.println("Rol detectado: ORGANIZADOR");
-            System.out.println("Bienvenido/a, " + organizador.getNombres() + " " + organizador.getApellidos());
-            System.out.println("Empresa asignada: " + organizador.getEmpresa());
-            System.out.print("¿Esta empresa es correcta? (S/N): ");
-            respuesta = scanner.nextLine();
-
-        } else {
-            return false;
-        }
-
-        return respuesta.equalsIgnoreCase("S");
-    }
 
     // Menu aficionado
     private static void menuAficionado(Scanner scanner, Sistema sistema, Aficionado aficionado) {

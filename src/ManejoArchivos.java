@@ -3,7 +3,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
@@ -24,7 +23,6 @@ public class ManejoArchivos {
             // Lectura del fichero
             String linea;
             while ((linea = br.readLine()) != null) {
-                //System.out.println(linea);
                 lineas.add(linea);
 
             }
@@ -56,7 +54,6 @@ public class ManejoArchivos {
             fichero = new FileWriter(nombreArchivo,true);
             bw = new BufferedWriter(fichero);
             bw.write(linea+"\n");
-            //System.out.println("ksdsdlsd");
 
         } catch (Exception e) {
             e.printStackTrace();
