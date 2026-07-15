@@ -70,7 +70,6 @@ public abstract class Usuario {
     public TipoUsuario getRol() {
         return rol;
     }
-
     public String toString() {
         return "Usuario{" + "codigoUnico='" + codigoUnico + ", nombres='" + nombres + ", apellidos='" + apellidos
                 + ", rol=" + rol + '}';
