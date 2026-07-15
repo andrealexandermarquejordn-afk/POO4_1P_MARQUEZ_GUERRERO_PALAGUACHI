@@ -1,7 +1,28 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Clase principal que contiene la lógica de ejecución del sistema.
+ * 
+ * Implementa el punto de entrada de la aplicación y gestiona la interfaz de usuario
+ * en línea de comandos. Coordina la carga de datos, la autenticación de usuarios,
+ * y el enrutamiento a los menús correspondientes según el tipo de usuario (aficionado u organizador).
+ * 
+ * @author Sistema de Gestión de Venta de Entradas
+ * @version 1.0
+ * @since 2024
+ */
 public class Main {
+    
+    /**
+     * Método principal que inicia la aplicación.
+     * 
+     * Inicializa el sistema, carga todos los datos persistentes (usuarios, partidos, kits, compras),
+     * y presenta un bucle principal que gestiona la autenticación de usuarios y el enrutamiento
+     * a los menús correspondientes. Cierra los recursos al finalizar.
+     * 
+     * @param args Argumentos de línea de comandos (no utilizado)
+     */
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
@@ -31,9 +52,17 @@ public class Main {
         scanner.close();
     }
 
-
-
-    // Menu aficionado
+    /**
+     * Muestra el menú interactivo de aficionado y gestiona sus operaciones.
+     * 
+     * Proporciona opciones para consultar partidos, comprar entradas individuales,
+     * comprar kits de entradas, consultar historial de compras y cerrar sesión.
+     * Valida las entradas del usuario y ejecuta las operaciones solicitadas.
+     * 
+     * @param scanner Objeto Scanner para leer entrada del usuario
+     * @param sistema Instancia del sistema con la lógica de negocio
+     * @param aficionado Usuario aficionado autenticado
+     */
     private static void menuAficionado(Scanner scanner, Sistema sistema, Aficionado aficionado) {
         boolean enMenu = true;
         while (enMenu) {
@@ -168,7 +197,16 @@ public class Main {
         }
     }
 
-    // Menu organizador
+    /**
+     * Muestra el menú interactivo de organizador y gestiona sus operaciones.
+     * 
+     * Proporciona opciones para consultar entradas vendidas, generar reportes de ventas
+     * y cerrar sesión. Ejecuta las operaciones administrativas solicitadas.
+     * 
+     * @param scanner Objeto Scanner para leer entrada del usuario
+     * @param sistema Instancia del sistema con la lógica de negocio
+     * @param organizador Usuario organizador autenticado
+     */
     private static void menuOrganizador(Scanner scanner, Sistema sistema, Organizador organizador) {
         boolean enMenu = true;
         while (enMenu) {

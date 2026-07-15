@@ -1,17 +1,44 @@
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Clase central que gestiona la logica del sistema de venta de entradas.
+ * 
+ * Coordina todas las operaciones del sistema incluyendo autenticacion de usuarios,
+ * consulta de partidos y kits, procesamiento de compras, generacion de reportes,
+ * y envio de notificaciones. Gestiona la persistencia de datos mediante archivos
+ * y mantiene las colecciones de usuarios, partidos, kits y compras en memoria.
+ * 
+ * @author Sistema de Gestion de Entradas
+ * @version 1.0
+ * @since 2024
+ */
 public class Sistema {
+    
+    /** Lista de todos los usuarios del sistema */
     private List<Usuario> usuarios;
+    
+    /** Lista de todos los partidos del torneo */
     private List<Partido> partidos;
+    
+    /** Lista de todos los kits de entradas disponibles */
     private List<Kit> kits;
+    
+    /** Lista de todas las compras realizadas */
     private List<Compra> compras;
+    
+    /** Formato utilizado para parsear y formatear fechas */
     private SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+    
+    /** Scanner para leer entrada del usuario desde consola */
     Scanner scanner = new Scanner(System.in);
 
+    /**
+     * Construye un nuevo Sistema inicializando todas las colecciones.
+     */
     public Sistema() {
         this.usuarios = new ArrayList<>();
         this.partidos = new ArrayList<>();
@@ -19,7 +46,11 @@ public class Sistema {
         this.compras = new ArrayList<>();
     }
 
-    // Muestra en consola todos los partidos disponibles.
+    /**
+     * Muestra en consola todos los partidos disponibles con detalles.
+     * 
+     * Presenta codigo, equipos, fecha, ubicacion, fase y disponibilidad de entradas.
+     */
     public void consultarPartidos() {
         System.out.println("Partidos encontrados:\n");
         int contador = 1;
@@ -43,7 +74,12 @@ public class Sistema {
         }
     }
  
-     public void consultarKits() {
+    /**
+     * Muestra en consola todos los kits disponibles con detalles.
+     * 
+     * Presenta nombre, codigo, partidos incluidos, precio y disponibilidad.
+     */
+    public void consultarKits() {
         System.out.println("===== KITS DISPONIBLES =====\n");
         int contador = 1;
         for (Kit k : this.kits) {
@@ -63,6 +99,13 @@ public class Sistema {
         }
     }
 
+    /**
+     * Envia notificacion por correo sobre compra de entrada.
+     * 
+     * @param aficionado El aficionado que realizo la compra
+     * @param compra La compra registrada
+     * @param zona La zona de entradas comprada
+     */
     public void notificar(Aficionado aficionado, Compra compra, Zona zona) {
         Partido partido = buscarPartido(compra.getCodigoReferencia());
 
@@ -81,6 +124,13 @@ public class Sistema {
         CorreoElectronico.enviarCorreo(aficionado.getCorreo(), "Compra de entrada realizada", cuerpo);
     }
 
+    /**
+     * Envia notificacion por correo sobre compra de kit.
+     * 
+     * @param aficionado El aficionado que realizo la compra
+     * @param compra La compra de kit registrada
+     * @param kit El kit que fue comprado
+     */
     public void notificar(Aficionado aficionado, Compra compra, Kit kit) {
         String cuerpo = "Estimado/a " + aficionado.getNombres() + " " + aficionado.getApellidos() + ",\n"
                 + "Su compra de paquete ha sido registrada exitosamente con el código " + compra.getCodigoCompra()
@@ -93,6 +143,12 @@ public class Sistema {
         CorreoElectronico.enviarCorreo(aficionado.getCorreo(), "Compra de Kit de Entradas realizada", cuerpo);
     }
 
+    /**
+     * Envia notificacion por correo sobre reporte de ventas.
+     * 
+     * @param organizador El organizador que recibe el reporte
+     * @param reporte El reporte de ventas generado
+     */
     public void notificar(Organizador organizador, ReporteVenta reporte) {
         String cuerpo = "Estimado/a " + organizador.getNombres() + " " + organizador.getApellidos() + ",\n"
                 + "Se ha generado el reporte de compras del sistema.\n"
@@ -105,6 +161,12 @@ public class Sistema {
         CorreoElectronico.enviarCorreo(organizador.getCorreo(), "Reporte de compras registradas", cuerpo);
     }
 
+    /**
+     * Carga todos los usuarios desde los archivos de datos.
+     * 
+     * Lee usuarios, aficionados y organizadores desde archivos de texto
+     * y construye los objetos correspondientes para agregarlos al sistema.
+     */
     public void cargarUsuarios() {
         ArrayList<String> lineasUsuarios = ManejoArchivos.LeeFichero("usuarios.txt");
         ArrayList<String> lineasAficionados = ManejoArchivos.LeeFichero("aficionados.txt");
@@ -141,6 +203,11 @@ public class Sistema {
         }
     }
 
+    /**
+     * Genera un reporte consolidado de todas las ventas del sistema.
+     * 
+     * @return ReporteVenta con total de compras, distribucion por tipo y monto
+     */
     public ReporteVenta generarReporte() {
         int totalEntrada = 0;
         int totalKit = 0;
@@ -160,6 +227,11 @@ public class Sistema {
     }
 
 
+    /**
+     * Carga todos los partidos desde el archivo de datos.
+     * 
+     * Lee partidos del archivo y establece precios automaticos segun la fase.
+     */
     public void cargarPartidos() {
         ArrayList<String> lineas = ManejoArchivos.LeeFichero("partidos.txt");
         for (int i = 1; i < lineas.size(); i++) {
@@ -190,6 +262,11 @@ public class Sistema {
         }
     }
 
+    /**
+     * Carga todos los kits desde el archivo de datos.
+     * 
+     * Lee kits y sus partidos asociados desde el archivo de datos.
+     */
     public void cargarKits() {
         ArrayList<String> lineas = ManejoArchivos.LeeFichero("kits.txt");
         for (int i = 1; i < lineas.size(); i++) {
@@ -203,6 +280,11 @@ public class Sistema {
         }
 }
 
+    /**
+     * Carga todas las compras desde el archivo de datos.
+     * 
+     * Lee compras previamente registradas y las carga en memoria.
+     */
     public void cargarCompras() {
         ArrayList<String> lineas = ManejoArchivos.LeeFichero("compras.txt");
         for (int i = 0; i < lineas.size(); i++) {
@@ -220,6 +302,11 @@ public class Sistema {
         }
     }
 
+    /**
+     * Registra una nueva compra en el sistema y la persiste en archivo.
+     * 
+     * @param compra La compra a registrar
+     */
     public void registrarCompra(Compra compra) {
         if (compra != null) {
             this.compras.add(compra);
@@ -230,6 +317,12 @@ public class Sistema {
         }
     }
 
+    /**
+     * Busca un partido por su codigo.
+     * 
+     * @param codigo El codigo del partido a buscar
+     * @return El partido encontrado o null si no existe
+     */
     public Partido buscarPartido(String codigo) {
         for (Partido p : partidos) {
             if (p.getCodigo().equalsIgnoreCase(codigo)) return p;
@@ -237,6 +330,12 @@ public class Sistema {
         return null;
     }
 
+    /**
+     * Busca un kit por su codigo.
+     * 
+     * @param codigo El codigo del kit a buscar
+     * @return El kit encontrado o null si no existe
+     */
     public Kit buscarKit(String codigo) {
         for (Kit k : kits) {
             if (k.getCodigo().equalsIgnoreCase(codigo)) return k;
@@ -244,7 +343,17 @@ public class Sistema {
         return null;
     }
 
-public void comprar(Partido partido, Aficionado aficionado, Zona zona, int cantidad) {
+    /**
+     * Procesa la compra de entradas individuales de un partido.
+     * 
+     * Verifica stock, descuenta entradas, crea la compra y notifica al aficionado.
+     * 
+     * @param partido El partido para el cual se compran entradas
+     * @param aficionado El aficionado que realiza la compra
+     * @param zona La zona de entradas a comprar
+     * @param cantidad La cantidad de entradas a comprar
+     */
+    public void comprar(Partido partido, Aficionado aficionado, Zona zona, int cantidad) {
         if (partido.hayStock(zona, cantidad)) {
             partido.descontarStock(zona, cantidad);
             double precioUnitario = 0;
@@ -268,6 +377,15 @@ public void comprar(Partido partido, Aficionado aficionado, Zona zona, int canti
         }
     }
 
+    /**
+     * Procesa la compra de kits de entradas.
+     * 
+     * Verifica disponibilidad, descuenta kits, crea la compra y notifica al aficionado.
+     * 
+     * @param kit El kit a comprar
+     * @param aficionado El aficionado que realiza la compra
+     * @param cantidad La cantidad de kits a comprar
+     */
     public void comprar(Kit kit, Aficionado aficionado, int cantidad) {
         if (kit.getDisponibles() >= cantidad) {
             kit.setDisponibles(kit.getDisponibles() - cantidad);
@@ -280,6 +398,13 @@ public void comprar(Partido partido, Aficionado aficionado, Zona zona, int canti
         }
     }
 
+    /**
+     * Autentica un usuario por username y password.
+     * 
+     * @param username El nombre de usuario
+     * @param password La contrasena del usuario
+     * @return El usuario autenticado o null si las credenciales son invalidas
+     */
     public Usuario autenticarUsuario(String username, String password) {
         for (Usuario u : this.usuarios) {
             if (u.getUsername().equals(username) && u.getPassword().equals(password)) {
@@ -289,6 +414,13 @@ public void comprar(Partido partido, Aficionado aficionado, Zona zona, int canti
         return null; 
     }
 
+    /**
+     * Gestiona el inicio de sesion de un usuario.
+     * 
+     * Solicita credenciales, autentica y verifica la identidad del usuario.
+     * 
+     * @return ArrayList con [booleano de continuacion, usuario autenticado]
+     */
     public ArrayList<Object> iniciarSesion(){
         ArrayList<Object> lista = new ArrayList<>();
         boolean iniciado=true;
@@ -326,6 +458,16 @@ public void comprar(Partido partido, Aficionado aficionado, Zona zona, int canti
                 return lista;
             }
     }
+    
+    /**
+     * Verifica la identidad del usuario autenticado.
+     * 
+     * Confirma informacion personal del usuario mediante una pregunta de seguridad.
+     * 
+     * @param scanner Scanner para leer entrada del usuario
+     * @param usuario El usuario a verificar
+     * @return true si la identidad es confirmada, false en caso contrario
+     */
     public static boolean verificarIdentidad(Scanner scanner, Usuario usuario) {
         String respuesta;
 
@@ -351,30 +493,75 @@ public void comprar(Partido partido, Aficionado aficionado, Zona zona, int canti
 
         return respuesta.equalsIgnoreCase("S");
     }
-    //Metodos setters
+    
+    /**
+     * Establece la lista de usuarios del sistema.
+     * 
+     * @param usuarios La lista de usuarios a asignar
+     */
     public void setUsuarios(List<Usuario> usuarios) { 
         this.usuarios = usuarios; 
     }
+    
+    /**
+     * Establece la lista de partidos del sistema.
+     * 
+     * @param partidos La lista de partidos a asignar
+     */
     public void setPartidos(List<Partido> partidos) { 
         this.partidos = partidos; 
     }
+    
+    /**
+     * Establece la lista de kits del sistema.
+     * 
+     * @param kits La lista de kits a asignar
+     */
     public void setKits(List<Kit> kits) { 
         this.kits = kits; 
     }
+    
+    /**
+     * Establece la lista de compras del sistema.
+     * 
+     * @param compras La lista de compras a asignar
+     */
     public void setCompras(List<Compra> compras) { 
         this.compras = compras; 
     }
 
-    //Metodos getters
+    /**
+     * Obtiene la lista de usuarios del sistema.
+     * 
+     * @return La lista de usuarios
+     */
     public List<Usuario> getUsuarios() { 
         return usuarios; 
     }
+    
+    /**
+     * Obtiene la lista de partidos del sistema.
+     * 
+     * @return La lista de partidos
+     */
     public List<Partido> getPartidos() { 
         return partidos; 
     }
+    
+    /**
+     * Obtiene la lista de kits del sistema.
+     * 
+     * @return La lista de kits
+     */
     public List<Kit> getKits() { 
         return kits; 
     }
+    
+    /**
+     * Obtiene la lista de compras del sistema.
+     * 
+     * @return La lista de compras
+     */
     public List<Compra> getCompras() { 
         return compras; 
     }

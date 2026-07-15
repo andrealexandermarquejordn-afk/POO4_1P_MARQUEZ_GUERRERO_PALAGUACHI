@@ -6,7 +6,29 @@ import java.io.FileWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
+/**
+ * Clase utilidad para la lectura y escritura de archivos de texto.
+ * 
+ * Proporciona métodos estáticos para leer archivos completos en listas de strings
+ * y escribir contenido en archivos con soporte para codificación UTF-8.
+ * Maneja adecuadamente los recursos de entrada/salida con bloques try-finally.
+ * 
+ * @author Sistema de Persistencia de Datos
+ * @version 1.0
+ * @since 2024
+ */
 public class ManejoArchivos {
+    
+    /**
+     * Lee todas las líneas de un archivo de texto.
+     * 
+     * Abre el archivo especificado con codificación UTF-8 y lee línea por línea,
+     * almacenando cada una en un ArrayList de strings. El archivo se cierra automáticamente
+     * incluso si ocurre una excepción durante la lectura.
+     * 
+     * @param nombrearchivo Ruta del archivo a leer
+     * @return ArrayList contiendo todas las líneas del archivo, o vacío si hay error
+     */
     public static ArrayList<String> LeeFichero(String nombrearchivo) {
         ArrayList<String> lineas = new ArrayList<>();
         File archivo = null;
@@ -45,6 +67,16 @@ public class ManejoArchivos {
 
     }
 
+    /**
+     * Escribe una línea de texto en un archivo.
+     * 
+     * Añade una línea al final del archivo especificado en modo append.
+     * Si el archivo no existe, lo crea. La línea se escribe con salto de línea al final.
+     * Los recursos de escritura se cierran automáticamente.
+     * 
+     * @param nombreArchivo Ruta del archivo donde escribir
+     * @param linea Línea de texto a escribir
+     */
     public static void EscribirArchivo(String nombreArchivo, String linea) {
 
         FileWriter fichero = null;
@@ -70,6 +102,17 @@ public class ManejoArchivos {
             }
         }
     }
+    
+    /**
+     * Escribe múltiples líneas de texto en un archivo.
+     * 
+     * Sobrescribe el contenido del archivo especificado con el contenido del ArrayList.
+     * Cada elemento del ArrayList se escribe como una línea separada con salto de línea.
+     * Los recursos de escritura se cierran automáticamente en el bloque finally.
+     * 
+     * @param nombreArchivo Ruta del archivo donde escribir
+     * @param lineas ArrayList contiendo las líneas a escribir
+     */
     public static void EscribirArchivo(String nombreArchivo, ArrayList<String> lineas) {
         FileWriter fichero = null;
         BufferedWriter bw = null;
