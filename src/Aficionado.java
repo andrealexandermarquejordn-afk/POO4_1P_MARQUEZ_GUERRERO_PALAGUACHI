@@ -10,7 +10,7 @@
  * @version 1.0
  * @since 2024
  */
-public class Aficionado extends Usuario{
+public class Aficionado extends Usuario {
     
     /** Número de celular del aficionado */
     private String celular;
