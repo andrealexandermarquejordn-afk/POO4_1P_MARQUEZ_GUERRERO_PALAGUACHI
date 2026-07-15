@@ -1,7 +1,7 @@
 import java.util.Date;
 public class Compra {
 
-    private static int contadorCompras = 0; 
+    private static int contadorCompras = 0;
     private String codigoCompra;
     private TipoCompra tipo;
     private String codigoReferencia;
@@ -9,6 +9,7 @@ public class Compra {
     private int cantidad;
     private double valorPagado;
     private String codigoAficionado;
+    private String codigoAficionado
     
     public Compra(TipoCompra tipo, String codigoReferencia, int cantidad, double valorPagado, String codigoAficionado){
         contadorCompras++;
