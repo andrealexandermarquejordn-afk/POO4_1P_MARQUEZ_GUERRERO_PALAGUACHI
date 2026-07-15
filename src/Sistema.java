@@ -2,6 +2,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
+import java.util.Scanner;
 
 public class Sistema {
     private List<Usuario> usuarios;
@@ -9,6 +10,7 @@ public class Sistema {
     private List<Kit> kits;
     private List<Compra> compras;
     private SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+    Scanner scanner = new Scanner(System.in);
 
     public Sistema() {
         this.usuarios = new ArrayList<>();
@@ -287,6 +289,68 @@ public void comprar(Partido partido, Aficionado aficionado, Zona zona, int canti
         return null; 
     }
 
+    public ArrayList<Object> iniciarSesion(){
+        ArrayList<Object> lista = new ArrayList<>();
+        boolean iniciado=true;
+        lista.add(iniciado);
+        System.out.print("Ingrese su usuario (o 'salir' para apagar): ");
+            String username = scanner.nextLine();
+            
+            if (username.equalsIgnoreCase("salir")) {
+                System.out.println("Saliendo del sistema.");
+                lista.set(0,false);
+                lista.add(null);
+                return lista;
+            }
+
+            System.out.print("Ingrese su contraseña: ");
+            String password = scanner.nextLine();
+            Usuario usuarioActual = autenticarUsuario(username, password);
+            lista.add(usuarioActual);
+
+            if (usuarioActual != null) {
+                System.out.println("Usuario autenticado correctamente.");
+                boolean identidadConfirmada = verificarIdentidad(scanner, usuarioActual);
+
+                if (!identidadConfirmada) {
+                    System.out.println("Verificación fallida.");
+                    System.out.println("Por motivos de seguridad se cerrará la sesión.");
+                    System.out.println("Saliendo del sistema..");
+                    return lista;
+                }
+                System.out.println("Identidad confirmada.\n");
+                lista.set(0,false);
+                return lista;
+            } else {
+                System.out.println("\n Usuario o contraseña incorrectos. Intente de nuevo.\n");
+                return lista;
+            }
+    }
+    public static boolean verificarIdentidad(Scanner scanner, Usuario usuario) {
+        String respuesta;
+
+        if (usuario instanceof Aficionado) {
+            Aficionado aficionado = (Aficionado) usuario; 
+            System.out.println("Rol detectado: AFICIONADO");
+            System.out.println("Bienvenido/a, " + aficionado.getNombres() + " " + aficionado.getApellidos());
+            System.out.println("Celular registrado: " + aficionado.getCelular());
+            System.out.print("¿Este número de celular es correcto? (S/N): ");
+            respuesta = scanner.nextLine();
+
+        } else if (usuario instanceof Organizador) {
+            Organizador organizador = (Organizador) usuario; 
+            System.out.println("Rol detectado: ORGANIZADOR");
+            System.out.println("Bienvenido/a, " + organizador.getNombres() + " " + organizador.getApellidos());
+            System.out.println("Empresa asignada: " + organizador.getEmpresa());
+            System.out.print("¿Esta empresa es correcta? (S/N): ");
+            respuesta = scanner.nextLine();
+
+        } else {
+            return false;
+        }
+
+        return respuesta.equalsIgnoreCase("S");
+    }
     //Metodos setters
     public void setUsuarios(List<Usuario> usuarios) { 
         this.usuarios = usuarios; 
@@ -305,7 +369,6 @@ public void comprar(Partido partido, Aficionado aficionado, Zona zona, int canti
     public List<Usuario> getUsuarios() { 
         return usuarios; 
     }
-
     public List<Partido> getPartidos() { 
         return partidos; 
     }
