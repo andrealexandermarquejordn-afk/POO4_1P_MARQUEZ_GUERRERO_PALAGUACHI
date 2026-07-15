@@ -23,10 +23,6 @@ public abstract class Usuario {
         this.rol = rol;
     }
 
-    public boolean iniciarSesion(String username, String password) {
-        return false;
-    }
-
     //Metodos setters
     public void setCodigoUnico(String codigoUnico) {
         this.codigoUnico = codigoUnico;
