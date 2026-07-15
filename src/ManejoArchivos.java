@@ -70,28 +70,4 @@ public class ManejoArchivos {
             }
         }
     }
-    public static void EscribirArchivo(String nombreArchivo, ArrayList<String> lineas) {
-        FileWriter fichero = null;
-        BufferedWriter bw = null;
-        try {
-            fichero = new FileWriter(nombreArchivo, false);
-            bw = new BufferedWriter(fichero);
-            for (String linea : lineas) {
-                bw.write(linea + "\n");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (null != bw)
-                    bw.close();
-                if (null != fichero)
-                    fichero.close();
-            } catch (Exception e2) {
-                e2.printStackTrace();
-            }
-        }
-    }
-
-
 }
